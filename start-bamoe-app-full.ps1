@@ -1,0 +1,1 @@
+mvn clean "-Pdevelopment" "-Ddisable-bamoe-security" "-Ddisable-bamoe-kafka-events" "-Ddisable-opentelemetry" quarkus:dev

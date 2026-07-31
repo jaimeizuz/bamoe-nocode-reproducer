@@ -1,0 +1,631 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.jaime.bamoe.events</groupId>
+	<artifactId>bamoe-nocode-reproducer</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<name>bamoe-nocode-reproducer</name>
+	<description>bamoe-nocode-reproducer BAMOE reproducer</description>
+
+
+	<properties>
+		<revision>9.5.0-SNAPSHOT</revision>
+
+		<!-- Java and Compiler Versions -->
+		<java.version>21</java.version>
+		<maven.compiler.release>${java.version}</maven.compiler.release>
+		<maven.compiler-plugin.version>3.14.0</maven.compiler-plugin.version>
+		<maven.resources-plugin.version>3.3.1</maven.resources-plugin.version>
+		<maven.install-plugin.version>3.1.4</maven.install-plugin.version>
+		<maven.deploy-plugin.version>3.1.4</maven.deploy-plugin.version>
+		<maven.archetype-plugin.version>3.4.0</maven.archetype-plugin.version>
+		<maven.archetype-packaging-extension.version>3.4.0</maven.archetype-packaging-extension.version>
+		<maven.surefire-plugin.version>3.5.3</maven.surefire-plugin.version>
+		<jacoco.maven-plugin.version>0.8.13</jacoco.maven-plugin.version>
+
+		<!-- Quarkus Platform Properties -->
+		<quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
+		<quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
+		<quarkus.platform.version>3.27.5</quarkus.platform.version>
+
+		<!-- BAMOE BOM Properties -->
+		<bamoe.bom.group-id>com.ibm.bamoe</bamoe.bom.group-id>
+		<bamoe.bom.artifact-id>bamoe-quarkus-bom</bamoe.bom.artifact-id>
+		<bamoe.version>9.5.0-ibm-0005</bamoe.version>
+		<bamoe.techpreview.bom.artifact-id>bamoe-techpreview-bom</bamoe.techpreview.bom.artifact-id>
+
+		<!-- Mapstruct version -->
+		<org.mapstruct.version>1.6.3</org.mapstruct.version>
+
+		<!-- Devmode dependencies dependencies -->
+		<quarkus.wiremock.version>1.5.3</quarkus.wiremock.version>
+		<quarkus.embedded.postgresql.version>0.8.0</quarkus.embedded.postgresql.version>
+		<postgresql.version>17.6.0</postgresql.version>
+		<postgresql-jdbc.version>42.7.12</postgresql-jdbc.version>
+
+		<!-- OIDC proxy version -->
+		<quarkiverse.oidc.proxy.version>0.3.2</quarkiverse.oidc.proxy.version>
+
+		<!-- Logging Manager version -->
+		<quarkiverse.logging-manager.version>3.4.1</quarkiverse.logging-manager.version>
+
+		<!-- MCP Server version -->
+		<quarkiverse.mcp-server.version>1.9.1</quarkiverse.mcp-server.version>
+
+		<!-- Apache Commons Lang version -->
+		<apache.commons.lang.version>3.18.0</apache.commons.lang.version>
+
+		<!-- Apache Commons Validator library version -->
+		<apache.commons.validator.version>1.10.0</apache.commons.validator.version>
+
+		<!-- Google Guava library version -->
+		<com.google.guava.version>33.4.8-jre</com.google.guava.version>
+
+		<!-- Lombok library version -->
+		<org.projectlombok.version>1.18.40</org.projectlombok.version>
+
+		<!-- Lombok library version -->
+		<org.projectlombok.mapstruct.binding.version>0.2.0</org.projectlombok.mapstruct.binding.version>
+
+		<!-- SLF4J library version -->
+		<org.slf4j.version>2.0.17</org.slf4j.version>
+
+		<!-- Encoding -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<!-- Import Quarkus BOM -->
+			<dependency>
+				<groupId>${quarkus.platform.group-id}</groupId>
+				<artifactId>${quarkus.platform.artifact-id}</artifactId>
+				<version>${quarkus.platform.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<!-- Import BAMOE BOM -->
+			<dependency>
+				<groupId>${bamoe.bom.group-id}</groupId>
+				<artifactId>${bamoe.bom.artifact-id}</artifactId>
+				<version>${bamoe.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<!-- Import Additional BAMOE BOM  -->
+			<dependency>
+				<groupId>${bamoe.bom.group-id}</groupId>
+				<artifactId>${bamoe.techpreview.bom.artifact-id}</artifactId>
+				<version>${bamoe.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<!-- Import PostgreSQL binaries BOM for Embedded PostgreSQL -->
+			<dependency>
+				<groupId>io.zonky.test.postgres</groupId>
+				<artifactId>embedded-postgres-binaries-bom</artifactId>
+				<version>${postgresql.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<!-- Embedded PostgreSQL library version -->
+			<dependency>
+				<groupId>io.quarkiverse.embedded.postgresql</groupId>
+				<artifactId>quarkus-embedded-postgresql</artifactId>
+				<version>${quarkus.embedded.postgresql.version}</version>
+			</dependency>
+
+			<!-- Wiremock library version -->
+			<dependency>
+				<groupId>io.quarkiverse.wiremock</groupId>
+				<artifactId>quarkus-wiremock</artifactId>
+				<version>${quarkus.wiremock.version}</version>
+			</dependency>
+
+			<!-- OIDC Proxy library version -->
+			<dependency>
+				<groupId>io.quarkiverse.oidc-proxy</groupId>
+				<artifactId>quarkus-oidc-proxy</artifactId>
+				<version>${quarkiverse.oidc.proxy.version}</version>
+			</dependency>
+
+			<!-- Logging Manager library version -->
+			<dependency>
+				<groupId>io.quarkiverse.loggingmanager</groupId>
+				<artifactId>quarkus-logging-manager</artifactId>
+				<version>${quarkiverse.logging-manager.version}</version>
+			</dependency>
+
+			<!-- Quarkiverse MCP Server -->
+			<dependency>
+				<groupId>io.quarkiverse.mcp</groupId>
+				<artifactId>quarkus-mcp-server-sse</artifactId>
+				<version>${quarkiverse.mcp-server.version}</version>
+			</dependency>
+
+			<!-- Apache Commons Lang library version -->
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>${apache.commons.lang.version}</version>
+			</dependency>
+
+			<!-- Apache Commons Validator library version -->
+			<dependency>
+				<groupId>commons-validator</groupId>
+				<artifactId>commons-validator</artifactId>
+				<version>${apache.commons.validator.version}</version>
+			</dependency>
+
+			<!-- Mapstruct library version -->
+			<dependency>
+				<groupId>org.mapstruct</groupId>
+				<artifactId>mapstruct</artifactId>
+				<version>${org.mapstruct.version}</version>
+			</dependency>
+
+			<!-- Guava library version -->
+			<dependency>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>${com.google.guava.version}</version>
+			</dependency>
+
+			<!-- Lombok library version -->
+			<dependency>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok</artifactId>
+				<version>${org.projectlombok.version}</version>
+			</dependency>
+
+			<!-- Maven Archetype Packaging extension -->
+			<dependency>
+				<groupId>org.apache.maven.archetype</groupId>
+				<artifactId>archetype-packaging</artifactId>
+				<version>${maven.archetype-packaging-extension.version}</version>
+			</dependency>
+
+			<!-- Sonatype CVE sonatype-2025-003858 -->
+			<dependency>
+				<groupId>org.postgresql</groupId>
+				<artifactId>postgresql</artifactId>
+				<version>${postgresql-jdbc.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<!-- SLF4J -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${org.slf4j.version}</version>
+		</dependency>
+		<!-- jBPM and Drools -->
+		<dependency>
+			<groupId>org.jbpm</groupId>
+			<artifactId>jbpm-with-drools-quarkus</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.kie.kogito</groupId>
+			<artifactId>process-workitems</artifactId>
+		</dependency>
+
+		<!-- BAMOE public API -->
+		<dependency>
+			<groupId>org.kie.kogito</groupId>
+			<artifactId>kogito-api</artifactId>
+		</dependency>
+
+		<!-- BAMOE Persistence -->
+		<dependency>
+			<groupId>org.kie</groupId>
+			<artifactId>kie-addons-quarkus-persistence-jdbc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.quarkus</groupId>
+			<artifactId>quarkus-jdbc-postgresql</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.quarkus</groupId>
+			<artifactId>quarkus-agroal</artifactId>
+		</dependency>
+
+		<!-- BAMOE User Tasks persistence -->
+		<dependency>
+			<groupId>org.jbpm</groupId>
+			<artifactId>jbpm-addons-quarkus-usertask-storage-jpa</artifactId>
+		</dependency>
+
+		<!-- BAMOE Process Instance Migration -->
+		<dependency>
+			<groupId>com.ibm.bamoe</groupId>
+			<artifactId>bamoe-addons-quarkus-pim</artifactId>
+		</dependency>
+
+		<!-- BAMOE AI Integration -->
+		<dependency>
+			<groupId>com.ibm.bamoe</groupId>
+			<artifactId>bamoe-ai-agent-task-work-item-handler-quarkus</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.ibm.bamoe</groupId>
+			<artifactId>bamoe-gen-ai-task-work-item-handler-quarkus</artifactId>
+		</dependency>
+
+		<!-- Quarkus CDI -->
+		<dependency>
+			<groupId>io.quarkus</groupId>
+			<artifactId>quarkus-arc</artifactId>
+		</dependency>
+
+		<!-- Quarkus Cache -->
+		<dependency>
+			<groupId>io.quarkus</groupId>
+			<artifactId>quarkus-cache</artifactId>
+		</dependency>
+
+		<!-- Quarkus REST -->
+		<dependency>
+			<groupId>io.quarkus</groupId>
+			<artifactId>quarkus-rest-jackson</artifactId>
+		</dependency>
+
+		<!-- Quarkus REST Client -->
+		<dependency>
+			<groupId>io.quarkus</groupId>
+			<artifactId>quarkus-rest-client-jackson</artifactId>
+		</dependency>
+
+		<!-- Quarkus OpenAPI -->
+		<dependency>
+			<groupId>io.quarkus</groupId>
+			<artifactId>quarkus-smallrye-openapi</artifactId>
+		</dependency>
+
+		<!-- Quarkus Smallrye Health -->
+		<dependency>
+			<groupId>io.quarkus</groupId>
+			<artifactId>quarkus-smallrye-health</artifactId>
+		</dependency>
+
+		<!-- Tests -->
+		<dependency>
+			<groupId>io.quarkus</groupId>
+			<artifactId>quarkus-junit5</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.quarkus</groupId>
+			<artifactId>quarkus-junit5-mockito</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- Tests
+		<dependency>
+			<groupId>org.kie.kogito</groupId>
+			<artifactId>jbpm-tests</artifactId>
+			<version>999-SNAPSHOT</version>
+			<scope>test</scope>
+		</dependency>
+		-->
+	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>bamoe-kafka-events</id>
+			<activation>
+				<property>
+					<name>!disable-bamoe-kafka-events</name>
+				</property>
+			</activation>
+			<dependencies>
+				<!-- BAMOE Kafka Messaging -->
+				<dependency>
+					<groupId>org.kie</groupId>
+					<artifactId>kie-addons-quarkus-messaging</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>io.quarkus</groupId>
+					<artifactId>quarkus-messaging-kafka</artifactId>
+				</dependency>
+
+				<!-- BAMOE Kafka Events -->
+				<dependency>
+					<groupId>org.kie</groupId>
+					<artifactId>kie-addons-quarkus-events-process</artifactId>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<profile>
+			<id>bamoe-data-index</id>
+			<activation>
+				<property>
+					<name>!disable-bamoe-data-index</name>
+				</property>
+			</activation>
+			<dependencies>
+				<!-- BAMOE Data Index -->
+				<dependency>
+					<groupId>org.kie</groupId>
+					<artifactId>kogito-addons-quarkus-data-index-postgresql</artifactId>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<profile>
+			<id>bamoe-jobs</id>
+			<activation>
+				<property>
+					<name>!disable-bamoe-jobs</name>
+				</property>
+			</activation>
+			<dependencies>
+				<!-- BAMOE Async Jobs Service -->
+				<dependency>
+					<groupId>org.kie</groupId>
+					<artifactId>kogito-addons-quarkus-embedded-jobs-jpa</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.kie</groupId>
+					<artifactId>kogito-addons-quarkus-embedded-jobs</artifactId>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<profile>
+			<id>bamoe-data-audit</id>
+			<activation>
+				<property>
+					<name>!disable-bamoe-data-audit</name>
+				</property>
+			</activation>
+			<dependencies>
+				<!-- BAMOE Data Audit -->
+				<dependency>
+					<groupId>org.kie</groupId>
+					<artifactId>kogito-addons-quarkus-data-audit-jpa</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.kie</groupId>
+					<artifactId>kogito-addons-quarkus-data-audit</artifactId>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<profile>
+			<id>bamoe-management</id>
+			<activation>
+				<property>
+					<name>!disable-bamoe-management</name>
+				</property>
+			</activation>
+			<dependencies>
+				<!-- BAMOE Process Management endpoints -->
+				<dependency>
+					<groupId>org.kie</groupId>
+					<artifactId>kie-addons-quarkus-process-management</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.kie</groupId>
+					<artifactId>kie-addons-quarkus-process-svg</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.kie</groupId>
+					<artifactId>kie-addons-quarkus-source-files</artifactId>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<profile>
+			<id>bamoe-security</id>
+			<activation>
+				<property>
+					<name>!disable-bamoe-security</name>
+				</property>
+			</activation>
+			<dependencies>
+				<!-- OIDC Proxy -->
+				<dependency>
+					<groupId>io.quarkiverse.oidc-proxy</groupId>
+					<artifactId>quarkus-oidc-proxy</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>io.quarkus</groupId>
+					<artifactId>quarkus-rest-client-oidc-token-propagation</artifactId>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<profile>
+			<id>opentelemetry-traces-logs-metrics</id>
+			<activation>
+				<property>
+					<name>!disable-opentelemetry</name>
+				</property>
+			</activation>
+			<dependencies>
+				<!-- Logs (ELK) -->
+				<dependency>
+					<groupId>io.quarkus</groupId>
+					<artifactId>quarkus-logging-gelf</artifactId>
+				</dependency>
+
+				<!-- Metrics -->
+				<dependency>
+					<groupId>io.quarkus</groupId>
+					<artifactId>quarkus-micrometer</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>io.quarkus</groupId>
+					<artifactId>quarkus-micrometer-registry-prometheus</artifactId>
+				</dependency>
+
+				<!-- Traces -->
+				<dependency>
+					<groupId>io.quarkus</groupId>
+					<artifactId>quarkus-opentelemetry</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>io.opentelemetry.instrumentation</groupId>
+					<artifactId>opentelemetry-jdbc</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>io.opentelemetry.instrumentation</groupId>
+					<artifactId>opentelemetry-kafka-clients-2.6</artifactId>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<profile>
+			<id>development</id>
+			<properties>
+				<quarkus.profile>dev</quarkus.profile>
+			</properties>
+
+			<dependencies>
+				<!--
+				<dependency>
+					<groupId>com.ibm.bamoe</groupId>
+					<artifactId>bamoe-quarkus-devui</artifactId>
+				</dependency>
+				-->
+				<dependency>
+					<groupId>io.quarkiverse.wiremock</groupId>
+					<artifactId>quarkus-wiremock</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>io.quarkiverse.embedded.postgresql</groupId>
+					<artifactId>quarkus-embedded-postgresql</artifactId>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<profile>
+			<id>container</id>
+			<properties>
+				<quarkus.profile>container</quarkus.profile>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>io.quarkus</groupId>
+					<artifactId>quarkus-container-image-jib</artifactId>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>io.quarkus</groupId>
+				<artifactId>quarkus-maven-plugin</artifactId>
+				<version>${quarkus.platform.version}</version>
+				<extensions>true</extensions>
+				<executions>
+					<execution>
+						<goals>
+							<goal>build</goal>
+							<goal>generate-code</goal>
+							<goal>generate-code-tests</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven.compiler-plugin.version}</version>
+				<configuration>
+					<parameters>true</parameters>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.mapstruct</groupId>
+							<artifactId>mapstruct-processor</artifactId>
+							<version>${org.mapstruct.version}</version>
+						</path>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>${org.projectlombok.version}</version>
+						</path>
+						<dependency>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok-mapstruct-binding</artifactId>
+							<version>${org.projectlombok.mapstruct.binding.version}</version>
+						</dependency>
+					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>${maven.surefire-plugin.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+						<configuration>
+							<systemPropertyVariables>
+								<native.image.path>
+									${project.build.directory}/${project.build.finalName}-runner</native.image.path>
+								<java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+								<maven.home>${maven.home}</maven.home>
+							</systemPropertyVariables>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco.maven-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>default-prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>default-report</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>io.smallrye</groupId>
+				<artifactId>jandex-maven-plugin</artifactId>
+				<version>3.3.0</version>
+				<executions>
+					<execution>
+						<id>make-index</id>
+						<goals>
+							<goal>jandex</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
